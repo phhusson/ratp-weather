@@ -1,0 +1,19 @@
+<s:Envelope
+	xmlns:s="http://www.w3.org/2003/05/soap-envelope"
+	xmlns:x="http://wsiv.ratp.fr/xsd"
+	xmlns:ws="http://wsiv.ratp.fr"
+	>
+	<s:Header/>
+	<s:Body>
+		<ws:getMissionsNext>
+			<ws:station>
+				<x:id>3</x:id>
+				<x:line><x:id>RA</x:id></x:line>
+			</ws:station>
+			<ws:direction>
+				<x:sens>A</x:sens>
+			</ws:direction>
+		</ws:getMissionsNext>
+	</s:Body>
+</s:Envelope>
+
