@@ -24,15 +24,16 @@ for rer in A B;do
 done
 
 for rer in A B;do
-	day="$(date +%F)"
 	cat watchlist-RER${rer} |while read station;do
 		(
 		echo "RER ${rer}; $station"
 		p="logs/RER${rer}/${station}"
-		l="$p/$day"
 		t="$(mktemp)"
 
 		while true;do
+			day="$(date -d '2 hours ago' +%F)"
+			l="$p/$day"
+
 			date +%s >> "$l"
 			curl -s $ep -d "@${p}/.xml" -H 'Content-Type: application/soap+xml; charset=utf-8' | \
 				xmlsel -t -m //x:missions -v ./x:id -o \; -v ./x:stationsMessages -o \; -v ./x:stationsDates -o \; -v './x:stations[2]/x:name' -n > $t
