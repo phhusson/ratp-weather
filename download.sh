@@ -42,8 +42,9 @@ for rer in A B;do
 			now="$(date +%H:%M)"
 			next="$(date -d '1 minute' +%H:%M)"
 			next2="$(date -d '2 minute' +%H:%M)"
+			next3="$(date -d '3 minute' +%H:%M)"
 
-			if grep -qiE -e quai -e approche -e $now -e $next -e $next2 $t;then
+			if grep -qiE -e quai -e approche -e $now -e $next -e $next2 -e $next3 $t;then
 				sleep 5
 			else
 				sleep 60
