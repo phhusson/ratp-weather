@@ -14,6 +14,7 @@ else
 	}
 fi
 
+rm -f "$1".stats
 get_file "$1" |while read i;do
 	now=$(cat tmp/now)
 	if echo "$i"|grep -qE '^[0-9]+$';then
@@ -30,7 +31,14 @@ get_file "$1" |while read i;do
 			for train in $(cat tmp/$last/quai 2>/dev/null);do
 				if ! grep -q "$train" tmp/$now/quai 2> /dev/null;then
 					initial="$(cat tmp/$last/$train)"
-					echo "$(date -d @$now +%T) $train stayed for $((now-initial)) from $initial to $now"
+					delta=$((now-initial))
+					echo "$(date -d @$now +%T) $train stayed for $delta from $initial to $now"
+					if [ -n "$now" -a "$now" -gt 0 ];then
+						echo $train $delta $now >> "$1".stats
+						position="$(cat "$1".stats |sort -n -k 2 |grep -nE '\b'"$delta"'\b' |head -n 1 |grep -oE '^[0-9]+')"
+						size="$(cat "$1".stats | wc -l)"
+						echo -e "\t$(((position*100)/size)) percent"
+					fi
 				fi
 				mv tmp/$last/$train tmp/$now/$train
 			done
