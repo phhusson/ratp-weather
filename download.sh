@@ -45,7 +45,7 @@ for rer in A B;do
 			next3="$(date -d '3 minute' +%H:%M)"
 
 			if grep -qiE -e quai -e approche -e $now -e $next -e $next2 -e $next3 $t;then
-				sleep 5
+				sleep $((4+(RANDOM%3)))
 			else
 				sleep 60
 			fi
