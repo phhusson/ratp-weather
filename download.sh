@@ -10,24 +10,28 @@ xmled() {
 }
 
 
-for rer in A B;do
-	xmled -u '//ws:station/x:line/x:id' -v R${rer} getStations.xml > tmp.xml
-	curl -s $ep -d @tmp.xml -H 'Content-Type: application/soap+xml; charset=utf-8'|xmlstarlet fo > stations-RER${rer}.xml
+declare -A lines
+#lines=( ["RERA"]=RA ["RERB"]=RB ["T3a"]=198721 )
+lines=( ["RERA"]=RA ["RERB"]=RB)
+for line in "${!lines[@]}";do
+	echo Generating for line $line
+	xmled -u '//ws:station/x:line/x:id' -v "${lines[$line]}" getStations.xml > tmp.xml
+	curl -s $ep -d @tmp.xml -H 'Content-Type: application/soap+xml; charset=utf-8'|xmlstarlet fo > "stations-${line}.xml"
 
-	cat watchlist-RER${rer} |while read station;do
-		mkdir -p "logs/RER${rer}/${station}"
-		id="$(xmlsel -t -m '//x:stations[x:name/text()="'"$station"'"]' -v ./x:id -n stations-RER${rer}.xml)"
-		echo $id > "logs/RER${rer}/${station}"/.id
+	cat watchlist-$line |while read station;do
+		mkdir -p "logs/$line/${station}"
+		id="$(xmlsel -t -m '//x:stations[x:name/text()="'"$station"'"]' -v ./x:id -n stations-${line}.xml)"
+		echo $id > "logs/$line/${station}"/.id
 		xmled -u '//w:station/x:id' -v $id getMissionsNext.xml | \
-			xmled -u '//w:station/x:line/x:id' -v R${rer} > "logs/RER${rer}/${station}"/.xml
+			xmled -u '//w:station/x:line/x:id' -v "${lines[$line]}" > "logs/$line/${station}"/.xml
 	done
 done
 
-for rer in A B;do
-	cat watchlist-RER${rer} |while read station;do
+for line in "${!lines[@]}";do
+	cat watchlist-${line} |while read station;do
 		(
-		echo "RER ${rer}; $station"
-		p="logs/RER${rer}/${station}"
+		echo "${line}; $station"
+		p="logs/${line}/${station}"
 		t="$(mktemp)"
 
 		while true;do
