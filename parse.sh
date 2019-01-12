@@ -35,9 +35,6 @@ get_file "$1" |while read i;do
 					echo "$(date -d @$now +%T) $train stayed for $delta from $initial to $now"
 					if [ -n "$now" -a "$now" -gt 0 ];then
 						echo $train $delta $now >> "$1".stats
-						position="$(cat "$1".stats |sort -n -k 2 |grep -nE '\b'"$delta"'\b' |head -n 1 |grep -oE '^[0-9]+')"
-						size="$(cat "$1".stats | wc -l)"
-						echo -e "\t$(((position*100)/size)) percent"
 					fi
 				fi
 				mv tmp/$last/$train tmp/$now/$train
